@@ -1,0 +1,63 @@
+services:
+  laravel_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hrportal_app
+    volumes:
+      - .:/var/www/html
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_KEY=${APP_KEY}
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=hrportal
+      - DB_USERNAME=hruser
+      - DB_PASSWORD=hrpassword
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - hrportal
+
+  nginx:
+    image: nginx:alpine
+    container_name: hrportal_nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - laravel_app
+    networks:
+      - hrportal
+
+  mysql:
+    image: mysql:8.0
+    container_name: hrportal_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: hrportal
+      MYSQL_USER: hruser
+      MYSQL_PASSWORD: hrpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - hrportal
+
+networks:
+  hrportal:
+    driver: bridge
+
+volumes:
+  mysql_data:
