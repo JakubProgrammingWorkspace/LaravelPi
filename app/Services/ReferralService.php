@@ -92,7 +92,7 @@ class ReferralService
 
         // Create PDF
         $options = new Options();
-        $options->set('defaultFont', 'Arial');
+        $options->set('defaultFont', 'DejaVuSans');
         $options->set('isHtml5ParserEnabled', true);
         $options->set('isPhpEnabled', false);
         $dompdf = new Dompdf($options);
@@ -195,7 +195,7 @@ class ReferralService
 <head>
     <meta charset="utf-8">
     <style>
-        body { font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.4; margin: 20mm; }
+        body { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 11pt; line-height: 1.4; margin: 20mm; }
         h1 { font-size: 16pt; text-align: center; margin-bottom: 5mm; }
         h2 { font-size: 13pt; text-align: center; margin-top: 3mm; margin-bottom: 2mm; }
         .header { text-align: right; margin-bottom: 5mm; font-size: 10pt; }
