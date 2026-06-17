@@ -53,19 +53,21 @@
                                     <i class="bi bi-eye"></i>
                                 </a>
                                 @if($referral->hasPdf())
-                                <a href="{{ route('referrals.pdf', $referral) }}" class="btn btn-sm btn-outline-primary" title="Pobierz PDF">
-                                    <i class="bi bi-file-earmark-pdf"></i> Pobierz PDF
+                                {{-- PDF already generated: direct download link --}}
+                                <a href="{{ route('referrals.pdf', $referral) }}" class="btn btn-sm btn-primary" title="Pobierz PDF">
+                                    <i class="bi bi-download me-1"></i>Pobierz PDF
                                 </a>
                                 @else
+                                {{-- No PDF yet: generate it first --}}
                                 <form action="{{ route('referrals.generate-pdf', $referral) }}" method="POST" class="d-inline">
                                     @csrf
-                                    <button type="submit" class="btn btn-sm btn-outline-warning" title="Generuj PDF">
-                                        <i class="bi bi-file-earmark-pdf"></i> Generuj PDF
+                                    <button type="submit" class="btn btn-sm btn-warning">
+                                        <i class="bi bi-file-earmark-pdf me-1"></i>Generuj PDF
                                     </button>
                                 </form>
                                 @endif
                                 <form action="{{ route('referrals.destroy', $referral) }}" method="POST" class="d-inline"
-                                    onsubmit="return confirm('Czy na pewno usunąć to skpierowanie?');">
+                                    onsubmit="return confirm('Czy na pewno usunąć to skierowanie?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-outline-danger" title="Usuń">

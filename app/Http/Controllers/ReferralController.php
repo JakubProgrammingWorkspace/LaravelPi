@@ -90,12 +90,16 @@ class ReferralController extends Controller
     /**
      * Download / stream the PDF.
      */
-    public function downloadPdf(Referral $referral): \Illuminate\Http\BinaryFileResponse|\Illuminate\Http\Response
+    public function downloadPdf(Referral $referral)
     {
-        $pdfPath = $this->referralService->downloadPdf($referral);
+        $response = $this->referralService->downloadPdf($referral);
 
-        // If no PDF exists, return 404
-        return $pdfPath;
+        // If no PDF exists, return 404 page (not JSON) for <a> links
+        if ($response instanceof \Illuminate\Http\JsonResponse) {
+            abort(404, 'Nie wygenerowano jeszcze PDF dla tego skierowania.');
+        }
+
+        return $response;
     }
 
     /**

@@ -67,7 +67,9 @@ class Referral extends Model
      */
     public function hasPdf(): bool
     {
-        return !is_null($this->pdf_path) && storage_path($this->pdf_path) !== '' && file_exists(storage_path($this->pdf_path));
+        return !is_null($this->pdf_path)
+            && !empty($this->pdf_path)
+            && file_exists(storage_path('app/' . $this->pdf_path));
     }
 
     /**

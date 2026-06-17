@@ -124,7 +124,7 @@ class ReferralService
     /**
      * Download the PDF. Returns the binary file response or 404.
      */
-    public function downloadPdf(Referral $referral): \Illuminate\Http\BinaryFileResponse|\Illuminate\Http\Response
+    public function downloadPdf(Referral $referral)
     {
         $path = $referral->pdf_path;
 
