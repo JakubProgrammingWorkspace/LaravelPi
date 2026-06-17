@@ -102,7 +102,7 @@
                                     <i class="bi bi-people"></i> Employees
                                 </a>
                             </li>
-                            @if (auth()->check() && auth()->user()->isAdmin())
+                            @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->hasRole('manager')))
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
                                         <i class="bi bi-person-gear"></i> Users

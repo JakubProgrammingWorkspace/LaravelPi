@@ -20,6 +20,11 @@ class RoleMiddleware
             return redirect('/login');
         }
 
+        // Admin can access everything
+        if (Auth::user()->isAdmin()) {
+            return $next($request);
+        }
+
         foreach ($roles as $role) {
             if (Auth::user()->hasRole($role)) {
                 return $next($request);

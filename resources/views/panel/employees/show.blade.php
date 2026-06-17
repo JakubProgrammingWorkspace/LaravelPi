@@ -11,9 +11,11 @@
         <a href="{{ route('employees.index') }}" class="btn btn-secondary">
             <i class="bi bi-arrow-left me-1"></i>Back to Employees
         </a>
-        <a href="{{ route('employees.edit', $employee) }}" class="btn btn-warning">
-            <i class="bi bi-pencil me-1"></i>Edit Employee
-        </a>
+        @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->hasRole('manager')))
+            <a href="{{ route('employees.edit', $employee) }}" class="btn btn-warning">
+                <i class="bi bi-pencil me-1"></i>Edit Employee
+            </a>
+        @endif
     </div>
 </div>
 

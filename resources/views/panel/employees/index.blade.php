@@ -7,9 +7,11 @@
     <h1 class="h2">
         <i class="bi bi-people me-2"></i>Employees
     </h1>
-    <a href="{{ route('employees.create') }}" class="btn btn-primary">
-        <i class="bi bi-person-plus me-1"></i>Add Employee
-    </a>
+    @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->hasRole('manager')))
+        <a href="{{ route('employees.create') }}" class="btn btn-primary">
+            <i class="bi bi-person-plus me-1"></i>Add Employee
+        </a>
+    @endif
 </div>
 
 @if($employees->isEmpty())
@@ -91,19 +93,21 @@
                                class="btn btn-sm btn-outline-info" title="View">
                                 <i class="bi bi-eye"></i>
                             </a>
-                            <a href="{{ route('employees.edit', $employee) }}"
-                               class="btn btn-sm btn-outline-warning" title="Edit">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            <form action="{{ route('employees.destroy', $employee) }}"
-                                  method="POST" class="d-inline"
-                                  onsubmit="return confirm('Are you sure you want to remove this employee?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Remove">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
+                            @if (auth()->check() && (auth()->user()->isAdmin() || auth()->user()->hasRole('manager')))
+                                <a href="{{ route('employees.edit', $employee) }}"
+                                   class="btn btn-sm btn-outline-warning" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form action="{{ route('employees.destroy', $employee) }}"
+                                      method="POST" class="d-inline"
+                                      onsubmit="return confirm('Are you sure you want to remove this employee?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Remove">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            @endif
                         </td>
                     </tr>
                 @endforeach
