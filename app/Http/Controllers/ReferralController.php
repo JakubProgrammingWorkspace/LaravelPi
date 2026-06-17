@@ -83,7 +83,7 @@ class ReferralController extends Controller
     {
         $pdfPath = $this->referralService->generatePdf($referral);
 
-        return redirect()->route('referrals.show', $referral)
+        return redirect()->route('referrals.index')
             ->with('success', 'PDF został wygenerowany pomyślnie.');
     }
 
