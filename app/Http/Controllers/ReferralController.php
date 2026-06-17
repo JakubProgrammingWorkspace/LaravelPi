@@ -23,7 +23,7 @@ class ReferralController extends Controller
      */
     public function index(): View
     {
-        $referrals = $this->referralService->list()->paginate(15)->withQueryString();
+        $referrals = $this->referralService->list();
 
         return view('panel.referrals.index', compact('referrals'));
     }
