@@ -21,10 +21,5 @@ class AdminRoleSeeder extends Seeder
             ['name' => 'manager'],
             ['description' => 'Manager role with access to employee management']
         );
-
-        Role::firstOrCreate(
-            ['name' => 'employee'],
-            ['description'   => 'Standard employee role with limited access']
-        );
     }
 }

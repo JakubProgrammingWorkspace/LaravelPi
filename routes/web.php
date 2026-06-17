@@ -33,21 +33,14 @@ Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
 Route::middleware(['auth'])->group(function () {
 
-    // ——— Employees ———
-    // View-only: 'employee' role (can list and view employees)
-    Route::middleware(['role:employee'])->group(function () {
-        Route::get('/panel/employees', [EmployeeController::class, 'index'])->name('employees.index');
-        Route::get('/panel/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
-    });
-
-    // Full CRUD: 'manager' role (create, edit, delete employees too)
-    Route::middleware(['role:manager'])->group(function () {
-        Route::get('/panel/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
-        Route::post('/panel/employees', [EmployeeController::class, 'store'])->name('employees.store');
-        Route::get('/panel/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
-        Route::patch('/panel/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
-        Route::delete('/panel/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
-    });
+    // ——— Employees (all authenticated users can manage) ———
+    Route::get('/panel/employees', [EmployeeController::class, 'index'])->name('employees.index');
+    Route::get('/panel/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
+    Route::post('/panel/employees', [EmployeeController::class, 'store'])->name('employees.store');
+    Route::get('/panel/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
+    Route::get('/panel/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
+    Route::patch('/panel/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
+    Route::delete('/panel/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
 
     // ——— Users & Roles (admin only) ———
     Route::middleware(['role:admin'])->group(function () {
@@ -65,14 +58,5 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/panel/roles', [RoleController::class, 'index'])->name('roles.index');
         Route::get('/panel/roles/{role}', [RoleController::class, 'show'])->name('roles.show');
         Route::delete('/panel/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
-    });
-
-    // ——— Employees: admin can also do full CRUD (admin is all-powerful) ———
-    Route::middleware(['role:admin'])->group(function () {
-        Route::get('/panel/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
-        Route::post('/panel/employees', [EmployeeController::class, 'store'])->name('employees.store');
-        Route::get('/panel/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
-        Route::patch('/panel/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
-        Route::delete('/panel/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
     });
 });
