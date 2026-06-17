@@ -53,7 +53,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="/">
-                <i class="bi bi-building me-2"></i>{{ config('app.name', 'HR Portal') }}
+                <i class="bi bi-building me-2"></i>Portal HR
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -72,7 +72,7 @@
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
                                         <button type="submit" class="dropdown-item text-danger">
-                                            <i class="bi bi-box-arrow-right me-1"></i>Logout
+                                            <i class="bi bi-box-arrow-right me-1"></i>Wyloguj
                                         </button>
                                     </form>
                                 </li>
@@ -81,7 +81,7 @@
                     @else
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('login') }}">
-                                <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Zaloguj się
                             </a>
                         </li>
                     @endauth
@@ -98,19 +98,39 @@
                     <div class="position-sticky">
                         <ul class="nav flex-column">
                             <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
+                                    <i class="bi bi-speedometer2"></i> Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link {{ request()->routeIs('employees.*') ? 'active' : '' }}" href="{{ route('employees.index') }}">
-                                    <i class="bi bi-people"></i> Employees
+                                    <i class="bi bi-people"></i> Pracownicy
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('companies.*') ? 'active' : '' }}" href="{{ route('companies.index') }}">
+                                    <i class="bi bi-building"></i> Firmy
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('referrals.*') ? 'active' : '' }}" href="{{ route('referrals.index') }}">
+                                    <i class="bi bi-file-earmark-text"></i> Skierowania
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('exposure-factors.*') ? 'active' : '' }}" href="{{ route('exposure-factors.index') }}">
+                                    <i class="bi bi-exclamation-triangle"></i> Czynniki narażeń
                                 </a>
                             </li>
                             @if (auth()->check() && auth()->user()->isAdmin())
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}" href="{{ route('users.index') }}">
-                                        <i class="bi bi-person-gear"></i> Users
+                                        <i class="bi bi-person-gear"></i> Użytkownicy
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}" href="{{ route('roles.index') }}">
-                                        <i class="bi bi-shield-check"></i> Roles
+                                        <i class="bi bi-shield-check"></i> Role
                                     </a>
                                 </li>
                             @endif

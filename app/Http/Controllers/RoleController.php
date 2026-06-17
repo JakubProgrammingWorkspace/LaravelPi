@@ -38,10 +38,10 @@ class RoleController extends Controller
     public function destroy(Role $role): RedirectResponse
     {
         if ($this->roleService->hasAssignedUsers($role)) {
-            return back()->with('error', 'Cannot delete role: it is assigned to ' . $this->roleService->countAssignedUsers($role) . ' user(s).');
+            return back()->with('error', 'Nie można usunąć roli: jest przypisana do ' . $this->roleService->countAssignedUsers($role) . ' użytkownik(ów).');
         }
 
         $this->roleService->delete($role);
-        return back()->with('success', 'Role deleted successfully.');
+        return back()->with('success', 'Rola usunięta pomyślnie.');
     }
 }

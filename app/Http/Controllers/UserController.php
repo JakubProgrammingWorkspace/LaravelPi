@@ -52,7 +52,7 @@ class UserController extends Controller
 
         $this->userService->create($validated);
 
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
+        return redirect()->route('users.index')->with('success', 'Użytkownik utworzony pomyślnie.');
     }
 
     /**
@@ -89,7 +89,7 @@ class UserController extends Controller
 
         $this->userService->update($user, $validated);
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        return redirect()->route('users.index')->with('success', 'Użytkownik zaktualizowany pomyślnie.');
     }
 
     /**
@@ -100,9 +100,9 @@ class UserController extends Controller
         $result = $this->userService->delete($user);
 
         if ($result === null) {
-            return back()->with('error', 'You cannot delete your own account.');
+            return back()->with('error', 'Nie można usunąć własnego konta.');
         }
 
-        return back()->with('success', 'User deleted successfully.');
+        return back()->with('success', 'Użytkownik usunięty pomyślnie.');
     }
 }

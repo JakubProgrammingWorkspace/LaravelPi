@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Employee extends Model
 {
@@ -19,9 +21,12 @@ class Employee extends Model
         'position',
         'department',
         'phone',
+        'pesel',
         'hire_date',
         'salary',
         'status',
+        'address',
+        'company_id',
         'created_by',
         'updated_by',
         'notes',
@@ -54,6 +59,22 @@ class Employee extends Model
     public function updater(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by');
+    }
+
+    /**
+     * BelongsTo: Employee belongs to a company.
+     */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    /**
+     * HasMany: Employee has many referrals.
+     */
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(Referral::class);
     }
 
     /**

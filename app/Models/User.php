@@ -86,4 +86,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(Employee::class, 'updated_by');
     }
+
+    /**
+     * HasMany: A user created many companies.
+     */
+    public function createdCompanies(): HasMany
+    {
+        return $this->hasMany(Company::class, 'created_by');
+    }
+
+    /**
+     * HasMany: A user created many referrals.
+     */
+    public function createdReferrals(): HasMany
+    {
+        return $this->hasMany(Referral::class, 'created_by');
+    }
 }

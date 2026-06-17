@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     git zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
     libfreetype6-dev libjpeg62-turbo-dev libwebp-dev libargon2-dev \
     libssl-dev libtidy-dev libcurl4-openssl-dev libicu-dev \
+    libmagickwand-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
     && docker-php-ext-install -j$(nproc) \
     gd mysqli pdo_mysql zip xml mbstring bcmath ctype curl \

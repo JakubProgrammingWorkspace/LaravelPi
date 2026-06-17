@@ -19,9 +19,12 @@ return new class extends Migration
             $table->string('position')->nullable();
             $table->string('department')->nullable();
             $table->string('phone')->nullable();
+            $table->string('pesel')->unique()->nullable();
             $table->date('hire_date')->nullable();
             $table->decimal('salary', 10, 2)->nullable();
             $table->enum('status', ['active', 'inactive', 'terminated'])->default('active');
+            $table->text('address')->nullable(); // street, city, postalCode
+            $table->foreignId('company_id')->nullable()->constrained('companies')->nullOnDelete();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->text('notes')->nullable();

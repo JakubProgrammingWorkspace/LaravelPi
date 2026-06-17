@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Company;
 use App\Models\Employee;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
@@ -14,9 +15,10 @@ class EmployeeService
         string $search = '',
         string $status = '',
         string $department = '',
-        int $perPage = 15
+        int $perPage = 15,
+        ?int $companyId = null
     ): LengthAwarePaginator {
-        $query = Employee::orderBy('last_name');
+        $query = Employee::with('company')->orderBy('last_name');
 
         // Search
         if ($search !== '') {
@@ -25,7 +27,8 @@ class EmployeeService
                   ->orWhere('last_name', 'like', "%{$search}%")
                   ->orWhere('email', 'like', "%{$search}%")
                   ->orWhere('position', 'like', "%{$search}%")
-                  ->orWhere('department', 'like', "%{$search}%");
+                  ->orWhere('department', 'like', "%{$search}%")
+                  ->orWhere('pesel', 'like', "%{$search}%");
             });
         }
 
@@ -37,6 +40,11 @@ class EmployeeService
         // Department filter
         if ($department !== '') {
             $query->where('department', $department);
+        }
+
+        // Company filter
+        if ($companyId !== null) {
+            $query->where('company_id', $companyId);
         }
 
         return $query->paginate($perPage)->withQueryString();

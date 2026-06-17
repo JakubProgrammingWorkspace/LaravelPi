@@ -1,112 +1,61 @@
 @extends('layouts.app')
 
-@section('title', 'Add User')
+@section('title', 'Dodaj użytkownika')
 
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-            <h1 class="h2"><i class="bi bi-person-plus me-2"></i>Add User</h1>
-        </div>
-
-        <form method="POST" action="{{ route('users.store') }}">
-            @csrf
-
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title mb-3">User Information</h5>
-
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" id="name"
-                               class="form-control @error('name') is-invalid @enderror"
-                               value="{{ old('name') }}" required autofocus>
-                        @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
-                        <input type="email" name="email" id="email"
-                               class="form-control @error('email') is-invalid @enderror"
-                               value="{{ old('email') }}" required>
-                        @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
-                            <input type="password" name="password" id="password"
-                                   class="form-control @error('password') is-invalid @enderror"
-                                   minlength="8" required>
-                            @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                        <div class="col-md-6">
-                            <label for="password_confirmation" class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                            <input type="password" name="password_confirmation" id="password_confirmation"
-                                   class="form-control" minlength="8" required>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title mb-3">Assign Roles</h5>
-
-                    @if($roles->isEmpty())
-                        <div class="alert alert-warning mb-0">
-                            <i class="bi bi-exclamation-triangle me-2"></i>No roles available.
-                            Please create roles first in the <a href="{{ route('roles.index') }}">Roles</a> section.
-                        </div>
-                    @else
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" name="roles[]" id="role_all" value="">
-                            <label class="form-check-label" for="role_all">
-                                Select all roles
-                            </label>
-                        </div>
-                        @foreach($roles as $role)
-                            <div class="form-check">
-                                <input class="form-check-input role-checkbox" type="checkbox"
-                                       name="roles[]" id="role_{{ $role->id }}" value="{{ $role->id }}">
-                                <label class="form-check-label" for="role_{{ $role->id }}">
-                                    {{ ucfirst($role->name) }}
-                                    @if($role->description)
-                                        <br><small class="text-muted">{{ $role->description }}</small>
-                                    @endif
-                                </label>
-                            </div>
-                        @endforeach
-                        @error('roles')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
-                    @endif
-                </div>
-            </div>
-
-            <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-lg me-1"></i>Create User
-                </button>
-                <a href="{{ route('users.index') }}" class="btn btn-secondary">
-                    <i class="bi bi-x-lg me-1"></i>Cancel
-                </a>
-            </div>
-        </form>
-    </div>
+<div class="mb-3">
+    <a href="{{ route('users.index') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i>Anuluj
+    </a>
+    <h2 class="d-inline"><i class="bi bi-plus-circle me-2"></i>Dodaj użytkownika</h2>
 </div>
 
-<script>
-// Toggle all checkboxes
-document.getElementById('role_all').addEventListener('change', function() {
-    const checkboxes = document.querySelectorAll('.role-checkbox');
-    checkboxes.forEach(cb => cb.checked = this.checked);
-});
+<form method="POST" action="{{ route('users.store') }}">
+    @csrf
 
-document.querySelectorAll('.role-checkbox').forEach(cb => {
-    cb.addEventListener('change', function() {
-        document.getElementById('role_all').checked =
-            document.querySelectorAll('.role-checkbox:checked').length ===
-            document.querySelectorAll('.role-checkbox').length;
-    });
-});
-</script>
+    <div class="mb-3">
+        <label for="name" class="form-label">Nazwa</label>
+        <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror"
+               value="{{ old('name') }}" required>
+        @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    </div>
+
+    <div class="mb-3">
+        <label for="email" class="form-label">E-mail</label>
+        <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror"
+               value="{{ old('email') }}" required>
+        @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    </div>
+
+    <div class="mb-3">
+        <label for="password" class="form-label">Hasło</label>
+        <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
+        <div class="form-text">Minimum 8 znaków.</div>
+        @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    </div>
+
+    <div class="mb-3">
+        <label for="password_confirmation" class="form-label">Potwierdź hasło</label>
+        <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="roles" class="form-label">Role</label>
+        <div class="form-check">
+            @foreach($roles as $role)
+            <div class="form-check">
+                <input type="checkbox" name="roles[]" value="{{ $role->id }}" id="role_{{ $role->id }}"
+                       class="form-check-input" {{ in_array($role->id, old('roles', [])) ? 'checked' : '' }}>
+                <label class="form-check-label" for="role_{{ $role->id }}">{{ $role->name }}</label>
+            </div>
+            @endforeach
+        </div>
+        @error('roles')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-check-circle me-1"></i>Zapisz
+    </button>
+    <a href="{{ route('users.index') }}" class="btn btn-outline-secondary">Anuluj</a>
+</form>
 @endsection
