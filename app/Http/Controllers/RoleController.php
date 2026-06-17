@@ -3,18 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
+use App\Services\RoleService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class RoleController extends Controller
 {
+    public function __construct(private readonly RoleService $roleService)
+    {
+    }
+
     /**
      * Display a listing of all roles.
      */
     public function index(): View
     {
-        $roles = Role::withCount('users')->orderBy('name')->paginate(15);
+        $roles = $this->roleService->list();
         return view('panel.roles.index', compact('roles'));
     }
 
@@ -23,7 +28,7 @@ class RoleController extends Controller
      */
     public function show(Role $role): View
     {
-        $role->load('users');
+        $role = $this->roleService->findWithUsers($role);
         return view('panel.roles.show', compact('role'));
     }
 
@@ -32,12 +37,11 @@ class RoleController extends Controller
      */
     public function destroy(Role $role): RedirectResponse
     {
-        // Check if role is assigned to any user
-        if ($role->users()->exists()) {
-            return back()->with('error', 'Cannot delete role: it is assigned to ' . $role->users()->count() . ' user(s).');
+        if ($this->roleService->hasAssignedUsers($role)) {
+            return back()->with('error', 'Cannot delete role: it is assigned to ' . $this->roleService->countAssignedUsers($role) . ' user(s).');
         }
 
-        $role->delete();
+        $this->roleService->delete($role);
         return back()->with('success', 'Role deleted successfully.');
     }
 }

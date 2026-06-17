@@ -3,49 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Services\EmployeeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class EmployeeController extends Controller
 {
+    public function __construct(private readonly EmployeeService $employeeService)
+    {
+    }
+
     /**
      * Display a listing of employees.
      */
     public function index(Request $request): View
     {
-        $query = Employee::orderBy('last_name');
+        $employees = $this->employeeService->search(
+            search:     $request->input('search', ''),
+            status:     $request->input('status', ''),
+            department: $request->input('department', ''),
+            perPage:    15
+        );
 
-        // Search
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('first_name', 'like', "%{$search}%")
-                  ->orWhere('last_name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('position', 'like', "%{$search}%")
-                  ->orWhere('department', 'like', "%{$search}%");
-            });
-        }
+        $departments = $this->employeeService->getDepartments();
 
-        // Status filter
-        if ($request->filled('status')) {
-            $query->where('status', $request->input('status'));
-        }
-
-        // Department filter
-        if ($request->filled('department')) {
-            $query->where('department', $request->input('department'));
-        }
-
-        // Get departments for filter dropdown
-        $departments = Employee::whereNotNull('department')
-            ->distinct()
-            ->pluck('department')
-            ->sort()
-            ->toArray();
-
-        $employees = $query->paginate(15)->withQueryString();
         return view('panel.employees.index', compact('employees', 'departments'));
     }
 
@@ -75,9 +57,7 @@ class EmployeeController extends Controller
             'notes'      => 'nullable|string',
         ]);
 
-        $employee = Employee::create(array_merge($validated, [
-            'created_by' => auth()->id(),
-        ]));
+        $employee = $this->employeeService->create($validated);
 
         return redirect()->route('employees.show', $employee)
             ->with('success', 'Employee added successfully.');
@@ -117,9 +97,7 @@ class EmployeeController extends Controller
             'notes'      => 'nullable|string',
         ]);
 
-        $employee->update(array_merge($validated, [
-            'updated_by' => auth()->id(),
-        ]));
+        $this->employeeService->update($employee, $validated);
 
         return redirect()->route('employees.show', $employee)
             ->with('success', 'Employee updated successfully.');
@@ -130,7 +108,8 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee): RedirectResponse
     {
-        $employee->delete();
+        $this->employeeService->delete($employee);
+
         return redirect()->route('employees.index')
             ->with('success', 'Employee removed successfully.');
     }

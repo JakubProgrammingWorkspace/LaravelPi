@@ -2,30 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class UserController extends Controller
 {
+    public function __construct(private readonly UserService $userService)
+    {
+    }
+
     /**
      * Display a listing of users.
      */
     public function index(Request $request): View
     {
-        $query = User::with('roles')->orderBy('name');
+        $users = $this->userService->search(
+            search: $request->input('search', ''),
+            perPage: 15
+        );
 
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        $users = $query->paginate(15);
         return view('panel.users.index', compact('users'));
     }
 
@@ -34,7 +33,7 @@ class UserController extends Controller
      */
     public function create(): View
     {
-        $roles = \App\Models\Role::orderBy('name')->get();
+        $roles = Role::orderBy('name')->get();
         return view('panel.users.create', compact('roles'));
     }
 
@@ -44,22 +43,14 @@ class UserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'roles' => 'array',
-            'roles.*' => 'exists:roles,id',
+            'roles'    => 'array',
+            'roles.*'  => 'exists:roles,id',
         ]);
 
-        $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ]);
-
-        if (!empty($validated['roles'])) {
-            $user->roles()->attach($validated['roles']);
-        }
+        $this->userService->create($validated);
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
@@ -78,7 +69,7 @@ class UserController extends Controller
      */
     public function edit(User $user): View
     {
-        $roles = \App\Models\Role::orderBy('name')->get();
+        $roles  = Role::orderBy('name')->get();
         $user->load('roles');
         return view('panel.users.edit', compact('user', 'roles'));
     }
@@ -89,26 +80,14 @@ class UserController extends Controller
     public function update(Request $request, User $user): RedirectResponse
     {
         $validated = $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:8|confirmed',
-            'roles' => 'array',
-            'roles.*' => 'exists:roles,id',
+            'roles'    => 'array',
+            'roles.*'  => 'exists:roles,id',
         ]);
 
-        $user->name  = $validated['name'];
-        $user->email = $validated['email'];
-
-        if (!empty($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
-        }
-
-        $user->save();
-
-        // Sync roles
-        if (isset($validated['roles'])) {
-            $user->roles()->sync($validated['roles']);
-        }
+        $this->userService->update($user, $validated);
 
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
@@ -118,11 +97,12 @@ class UserController extends Controller
      */
     public function destroy(User $user): RedirectResponse
     {
-        if ($user->id === auth()->id()) {
+        $result = $this->userService->delete($user);
+
+        if ($result === null) {
             return back()->with('error', 'You cannot delete your own account.');
         }
 
-        $user->delete();
         return back()->with('success', 'User deleted successfully.');
     }
 }
