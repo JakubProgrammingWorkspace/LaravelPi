@@ -6,8 +6,8 @@ use App\Models\ExposureCategory;
 use App\Models\ExposureFactor;
 use App\Models\Referral;
 use App\Models\ReferralExposureFactor;
-use DOMpdf\Dompdf;
-use DOMpdf\Options;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ReferralService
