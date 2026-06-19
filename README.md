@@ -46,7 +46,7 @@ This project was created end-to-end using the local model **Qwen3.6-35B-A3B-4bit
 ## Project Structure
 
 ```
-LaravelPi/
+HrPortal/
 ├── app/
 │   ├── Http/Controllers/    # Auth, Company, Dashboard, Employee,
 │   │                          ExposureFactor, Referral, Role, User
