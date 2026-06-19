@@ -1,58 +1,174 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# HR Portal — Occupational Health Referral System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel-based web application for managing occupational health referrals, employee records, companies, and exposure factors. Built with **Laravel 13** on **PHP 8.3** with role-based access control (Admin / standard users).
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Authentication** — Login/logout with session-based auth
+- **Employee Management** — Full CRUD for employees (name, email, position, department, PESEL, hire date, salary, status, address, notes), linked to companies
+- **Company Management** — Full CRUD for companies (name, NIP, address)
+- **Exposure Factors & Categories** — Define occupational exposure categories and factors
+- **Referrals** — Create occupational health referrals linked to employees, assign exposure factors, and **generate/download PDF** reports (via dompdf)
+- **Dashboard** — Overview at `/panel/dashboard`
+- **User & Role Management** — Admin-only CRUD for users and roles
+- **Role Middleware** — `role:admin` guard restricts sensitive routes
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Database (SQLite for dev, MySQL for production)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Table | Description |
+|---|---|
+| `users` | Authentication users |
+| `roles` | Roles (e.g. admin) |
+| `user_role` | Many-to-many user ↔ role |
+| `companies` | Company info (name, NIP, address) |
+| `employees` | Employee records (linked to company) |
+| `exposure_categories` | Exposure categories (code, name, sort order) |
+| `exposure_factors` | Specific exposure factors (linked to category) |
+| `referrals` | Occupational health referrals (type, job details, linked to employee) |
+| `referral_exposure_factors` | Many-to-many referral ↔ exposure factor with extra details |
 
-## Learning Laravel
+## API Overview (authenticated routes)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Prefix | Access | Description |
+|---|---|---|
+| `GET /panel/dashboard` | Any authenticated | Dashboard |
+| `GET /panel/employees` (CRUD) | Any authenticated | Employee management |
+| `GET /panel/companies` (CRUD) | Any authenticated | Company management |
+| `GET /panel/exposure-factors` (CRUD) | Any authenticated | Exposure factor management |
+| `GET /panel/referrals` (CRUD + PDF) | Any authenticated | Referral management with PDF generation |
+| `GET /panel/users` (CRUD) | **Admin only** | User management |
+| `GET /panel/roles` (CRUD) | **Admin only** | Role management |
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Project Structure
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+LaravelPi/
+├── app/
+│   ├── Http/Controllers/    # Auth, Company, Dashboard, Employee,
+│   │                          ExposureFactor, Referral, Role, User
+│   ├── Http/Middleware/     # RoleMiddleware
+│   ├── Models/              # User, Role, Company, Employee,
+│   │                          ExposureCategory, ExposureFactor,
+│   │                          Referral, ReferralExposureFactor
+│   └── Services/            # AuthService, CompanyService,
+│                              EmployeeService, ExposureFactorService,
+│                              ReferralService, RoleService, UserService
+├── database/
+│   ├── migrations/          # Schema for all tables
+│   ├── seeders/             # Admin user, roles, sample data
+│   └── database.sqlite      # SQLite (local development)
+├── resources/views/panel/   # Blade templates for all panels
+├── routes/web.php           # All routes
+├── docker/
+│   ├── docker-compose.yml   # 3 services: app, nginx, mysql
+│   └── nginx/default.conf   # Nginx config
+└── storage/app/             # Uploaded files & generated PDFs
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## Prerequisites
 
-## Contributing
+- **Docker** and **Docker Compose**
+- **PHP 8.3+** (for local development outside Docker)
+- **Node.js / npm** (for Vite asset compilation)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Running the Application
 
-## Code of Conduct
+### Using Docker (recommended)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+# 1. Start containers (builds + runs)
+docker compose up -d --build
 
-## Security Vulnerabilities
+# 2. Install PHP dependencies (one-time)
+docker compose exec laravel_app composer install --no-interaction
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 3. Generate application key (one-time)
+docker compose exec laravel_app php artisan key:generate --no-interaction
 
-## License
+# 4. Run migrations and seed admin data (one-time)
+docker compose exec laravel_app php artisan migrate:fresh --seed
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# 5. Open in browser
+#    http://localhost:8080/login
+#    Login: admin@hrportal.local  |  Password: password
+```
+
+### Local development (without Docker)
+
+```bash
+# 1. Copy environment file
+cp .env.example .env
+
+# 2. Generate application key
+php artisan key:generate
+
+# 3. Create SQLite database (if not present)
+touch database/database.sqlite
+
+# 4. Run migrations & seeders
+php artisan migrate:fresh --seed
+
+# 5. Start the development server
+npm install && npm run build        # Compile assets
+php artisan serve                    # Start Laravel server
+```
+
+### Docker-Compose services
+
+| Service   | Container     | Purpose                       | Port |
+|-----------|---------------|-------------------------------|------|
+| `laravel_app` | `hrportal_app` | Laravel PHP-FPM             | 9000 (internal) |
+| `nginx`   | `hrportal_nginx` | Web server (reverse proxy)  | 8080 → 80 |
+| `mysql`   | `hrportal_mysql` | MySQL 8.0 database           | 3306 → 3306 |
+
+## Key Endpoints
+
+| URL | Description |
+|---|---|
+| `http://localhost:8080/login` | Login page |
+| `http://localhost:8080/panel/dashboard` | Dashboard |
+| `http://localhost:8080/panel/employees` | Employee management |
+| `http://localhost:8080/panel/companies` | Company management |
+| `http://localhost:8080/panel/referrals` | Referral management |
+| `http://localhost:8080/panel/users` | User management (**admin**) |
+| `http://localhost:8080/panel/roles` | Role management (**admin**) |
+
+## Default Credentials
+
+```
+Email:    admin@hrportal.local
+Password: password
+```
+
+## Useful Commands
+
+```bash
+# Docker
+docker compose logs -f          # View logs
+docker compose down -v          # Stop + remove volumes (fresh start)
+docker compose restart          # Restart containers
+docker compose exec laravel_app php artisan migrate:fresh --seed  # Reset data
+
+# PHP / Laravel
+php artisan serve               # Local dev server
+php artisan tinker              # Interactive shell
+php artisan migrate:fresh --seed  # Fresh DB + seeders
+
+# Tests
+php artisan test                # Run PHPUnit tests
+
+# Asset building
+npm run build                   # Production build
+npm run dev                     # Vite HMR
+```
+
+## Tech Stack
+
+- **PHP 8.3** — Language runtime
+- **Laravel 13** — PHP framework
+- **MySQL 8.0** — Production database (SQLite for local dev)
+- **Nginx** — Reverse proxy / web server
+- **Vite** — Front-end asset bundler
+- **dompdf** — PDF report generation
+- **Blade** — Server-side templating
+- **MySQL** (via `doctrine/dbal`) — Schema introspection
