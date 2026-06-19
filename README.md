@@ -4,6 +4,8 @@
 
 A Laravel-based web application for managing occupational health referrals, employee records, companies, and exposure factors. Built with **Laravel 13** on **PHP 8.3** with role-based access control (Admin / standard users).
 
+> **Built entirely with local AI.** This project was created end-to-end using the local model **Qwen3.6-35B-A3B-4bit** and the coding agent **pi** — no cloud AI services or external paid APIs were involved. It serves as proof that powerful, production-quality Laravel applications can be built entirely with local LLMs.
+
 ## Features
 
 - **Authentication** — Login/logout with session-based auth
@@ -93,26 +95,6 @@ docker compose exec laravel_app php artisan migrate:fresh --seed
 # 5. Open in browser
 #    http://localhost:8080/login
 #    Login: admin@hrportal.local  |  Password: password
-```
-
-### Local development (without Docker)
-
-```bash
-# 1. Copy environment file
-cp .env.example .env
-
-# 2. Generate application key
-php artisan key:generate
-
-# 3. Create SQLite database (if not present)
-touch database/database.sqlite
-
-# 4. Run migrations & seeders
-php artisan migrate:fresh --seed
-
-# 5. Start the development server
-npm install && npm run build        # Compile assets
-php artisan serve                    # Start Laravel server
 ```
 
 ### Docker-Compose services
