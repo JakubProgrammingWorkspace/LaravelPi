@@ -1,3 +1,5 @@
+<!-- This project was entirely generated using the local model **Qwen3.6-35B-A3B-4bit** and the coding agent **pi**. No external AI APIs were used. -->
+
 # HR Portal — Occupational Health Referral System
 
 A Laravel-based web application for managing occupational health referrals, employee records, companies, and exposure factors. Built with **Laravel 13** on **PHP 8.3** with role-based access control (Admin / standard users).
@@ -13,7 +15,7 @@ A Laravel-based web application for managing occupational health referrals, empl
 - **User & Role Management** — Admin-only CRUD for users and roles
 - **Role Middleware** — `role:admin` guard restricts sensitive routes
 
-## Database (SQLite for dev, MySQL for production)
+## Database (MySQL)
 
 | Table | Description |
 |---|---|
@@ -166,7 +168,7 @@ npm run dev                     # Vite HMR
 
 - **PHP 8.3** — Language runtime
 - **Laravel 13** — PHP framework
-- **MySQL 8.0** — Production database (SQLite for local dev)
+- **MySQL 8.0** — Database (production & local via Docker)
 - **Nginx** — Reverse proxy / web server
 - **Vite** — Front-end asset bundler
 - **dompdf** — PDF report generation
