@@ -1,10 +1,10 @@
 <!-- This project was entirely generated using the local model **Qwen3.6-35B-A3B-4bit** and the coding agent **pi**. No external AI APIs were used. -->
 
-# HR Portal — Occupational Health Referral System
+# HR Portal — Built entirely with local LLM (Qwen3.6-35B-A3B-4bit + pi)
 
 A Laravel-based web application for managing occupational health referrals, employee records, companies, and exposure factors. Built with **Laravel 13** on **PHP 8.3** with role-based access control (Admin / standard users).
 
-> **Built entirely with local AI.** This project was created end-to-end using the local model **Qwen3.6-35B-A3B-4bit** and the coding agent **pi** — no cloud AI services or external paid APIs were involved. It serves as proof that powerful, production-quality Laravel applications can be built entirely with local LLMs.
+This project was created end-to-end using the local model **Qwen3.6-35B-A3B-4bit** and the coding agent **pi** — no cloud AI services or external paid APIs were involved. It serves as proof that powerful, production-quality Laravel applications can be built entirely with local LLMs.
 
 ## Features
 
